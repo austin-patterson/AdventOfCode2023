@@ -8,7 +8,9 @@
  * Final answer: ?
  */
 
-// Part 1 solution
+///////////////////
+// Boilerplate ////
+///////////////////
 
 const fs = require('fs');
 const readline = require('readline');
@@ -18,9 +20,13 @@ const rl = readline.createInterface({
   input: fs.createReadStream('01_example.txt'),
 });
 
+///////////////////
+// Part 1 solution
+///////////////////
+
 let globalSum = 0;
 
-function parse(line) {
+function parseDigits(line) {
   let a = NaN, b = NaN;
   let cursor = 0;
 
@@ -44,19 +50,117 @@ function printSum(a, b) {
   console.log(a + b);
 }
 
-// RUN
 
-rl.on('line', (line) => {
-  if (line.trim() === '') {
-    rl.close();
-  } else {
-    parse(line);
-    rl.prompt();
+///////////////////
+// Part 2 solution
+///////////////////
+globalSum = 0;
+
+const windowMax = 5;
+const dictionary = Object.create(null);
+Object.assign(dictionary, {
+  'one': 1,
+  'two': 2,
+  'three': 3,
+  'four': 4,
+  'five': 5,
+  'six': 6,
+  'seven': 7,
+  'eight': 8,
+  'nine': 9
+});
+
+/**
+ * 
+ * @param {string} line 
+ */
+function parseNumbers(line) {
+  let l = 0, r = 0;
+  let first = 0, second = 0;
+  let c = NaN;
+
+  const shiftRight = () => {
+    r++;
+    if (r - l > windowMax) {
+      l++;
+    }
+  };
+
+  const shiftLeft = () => {
+    l--;
+    if (r - l > windowMax) {
+      r--;
+    }
+  };
+
+  while (l < line.length && r < line.length && first === 0) {
+    c = Number(line.charAt(r));
+    if (!isNaN(c)) {
+      first = c;
+      break;
+    }
+
+    const word = line.slice(l,r);
+    if (dictionary[word]) {
+      first = dictionary[word];
+      break;
+    }
+
+    shiftRight()
   }
-});
 
-rl.on('close', () => {
-  console.log(globalSum);
-});
+  while (l > 0 && r > 0 && second === 0) {
+    c = Number(line.charAt(l));
+    if (!isNaN(c)) {
+      second = c;
+      break;
+    }
 
-rl.prompt();
+    const word = line.slice(l,r);
+    if (dictionary[word]) {
+      second = dictionary[word];
+      break;
+    }
+
+    shiftLeft();
+  }
+}
+
+
+///////////////////
+// RUN
+///////////////////
+
+function runPart1() {
+  rl.on('line', (line) => {
+    if (line.trim() === '') {
+      rl.close();
+    } else {
+      parseDigits(line);
+      rl.prompt();
+    }
+  });
+
+  rl.on('close', () => {
+    console.log(globalSum);
+  });
+
+  rl.prompt();
+}
+
+function runPart2() {
+  rl.on('line', (line) => {
+    if (line.trim() === '') {
+      rl.close();
+    } else {
+      parseDigits(line);
+      rl.prompt();
+    }
+  });
+
+  rl.on('close', () => {
+    console.log(globalSum);
+  });
+
+  rl.prompt();
+}
