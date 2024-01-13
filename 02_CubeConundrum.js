@@ -109,15 +109,24 @@ function parsePower(line) {
     blue: 0
   };
 
-  line.split(':')[1].split(';').split(',').map(p => p.trim()).forEach(pair => {
-    const color = pair[1].trim();
-    const num = Number(pair[0].trim());
-    if (num > min[color]) {
-      min[color] = num;
-    }
-  });
+  line.split(':')[1]
+    .split(';')
+    .forEach(pull => 
+      pull.split(',')
+        .map(p => p.trim())
+        .forEach(s => {
+          const pair = s.split(' ');
+          const color = pair[1].trim();
+          const num = Number(pair[0].trim());
+          if (num > min[color]) {
+            min[color] = num;
+          }
+        }
+      )
+    );
 
-  globalSum += min.red * min.green * min.blue; //power
+  const power = min.red * min.green * min.blue;
+  globalSum += power;
 }
 
 //////////////////////
