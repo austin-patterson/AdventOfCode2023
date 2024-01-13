@@ -17,7 +17,7 @@ const readline = require('readline');
 
 const rl = readline.createInterface({
   // input: fs.createReadStream('01_input.txt'),
-  input: fs.createReadStream('01_example.txt'),
+  input: fs.createReadStream('01_example2.txt'),
 });
 
 ///////////////////
@@ -70,12 +70,25 @@ Object.assign(dictionary, {
   'nine': 9
 });
 
+//for each partial word in word, see if it's in the dictionary and return the value if it is, else return 0
+function checkWords(word) {
+  for (let start = 0; start < word.length; start++) {
+    for (let end = start + 1; end <= word.length; end++) {
+      const partial = word.slice(start, end);
+      if (dictionary[partial]) {
+        return dictionary[partial];
+      }
+    }
+  }
+  return NaN;
+}
+
 /**
  * 
  * @param {string} line 
  */
 function parseNumbers(line) {
-  let l = 0, r = 0;
+  let l = 0, r = 1;
   let first = 0, second = 0;
   let c = NaN;
 
@@ -93,37 +106,41 @@ function parseNumbers(line) {
     }
   };
 
-  while (l < line.length && r < line.length && first === 0) {
-    c = Number(line.charAt(r));
+  while (l < line.length && r <= line.length && first === 0) {
+    c = Number(line.charAt(r - 1));
     if (!isNaN(c)) {
       first = c;
       break;
     }
 
-    const word = line.slice(l,r);
-    if (dictionary[word]) {
-      first = dictionary[word];
+    const wordValue = checkWords(line.slice(l, r));
+    if (!isNaN(wordValue)) {
+      first = wordValue;
       break;
     }
 
     shiftRight()
   }
 
-  while (l > 0 && r > 0 && second === 0) {
+  r = line.length;
+  l = r - 1;
+  while (l >= 0 && r > 0 && second === 0) {
     c = Number(line.charAt(l));
     if (!isNaN(c)) {
       second = c;
       break;
     }
 
-    const word = line.slice(l,r);
-    if (dictionary[word]) {
-      second = dictionary[word];
+    const wordValue = checkWords(line.slice(l, r));
+    if (!isNaN(wordValue)) {
+      second = wordValue;
       break;
     }
 
     shiftLeft();
   }
+
+  globalSum += Number(first.toFixed(0) + second.toFixed(0)) || 0;
 }
 
 
@@ -148,12 +165,13 @@ function runPart1() {
   rl.prompt();
 }
 
+globalSum = 0;
 function runPart2() {
   rl.on('line', (line) => {
     if (line.trim() === '') {
       rl.close();
     } else {
-      parseDigits(line);
+      parseNumbers(line);
       rl.prompt();
     }
   });
@@ -164,3 +182,6 @@ function runPart2() {
 
   rl.prompt();
 }
+
+// runPart1();
+runPart2();
