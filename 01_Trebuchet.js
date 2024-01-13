@@ -5,7 +5,7 @@
  * 
  * Part 2: digits can be spelled out
  * https://adventofcode.com/2023/day/1#part2
- * Final answer: ?
+ * Final answer: 55093
  */
 
 ///////////////////
