@@ -8,7 +8,7 @@
  * Part 2: 
  * https://adventofcode.com/2023/day/2#part2
  * Example answer: 2286
- * Final answer: ?
+ * Final answer: 63981
  * Find the sum of powers of each game set where each power is the product of the minimum number of cubes required to play the game.
  */
 
@@ -18,8 +18,8 @@ const fs = require('fs');
 const readline = require('readline');
 
 const rl = readline.createInterface({
-  input: fs.createReadStream('02_example.txt'),
-  // input: fs.createReadStream('02_input.txt'),
+  // input: fs.createReadStream('02_example.txt'),
+  input: fs.createReadStream('02_input.txt'),
 });
 
 let lineCount = 0;
