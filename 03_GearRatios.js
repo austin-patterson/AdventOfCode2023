@@ -18,26 +18,119 @@ const fs = require('fs');
 const readline = require('readline');
 
 const rl = readline.createInterface({
-  // input: fs.createReadStream('02_example.txt'),
-  input: fs.createReadStream('02_input.txt'),
+  input: fs.createReadStream('03_example.txt'),
+  // input: fs.createReadStream('03_input.txt'),
 });
 
-let lineCount = 0;
-let globalSum = 0;
 
 //////////////////////
 // Part 1 solution
 //////////////////////
 
-function part1(line) {
+const grid = [];
+const numbers = new Map();
+const symbols = [];
+const directions = [{dx:1,dy:0}, {dx:1,dy:1}, {dx:0,dy:1}, {dx:-1,dy:1}, {dx:-1,dy:0}, {dx:-1,dy:-1}, {dx:0,dy:-1}, {dx:1,dy:-1}];
 
+function runPart1() {
+  rl.on('line', (line) => {
+    if (line.trim() === '') {
+      rl.close();
+    } else {
+      line += '.';
+      parsePart1(line);
+      rl.prompt();
+    }
+  });
+
+  rl.on('close', () => {
+    console.log(sumPartNumbers());
+  });
+
+  rl.prompt();
+
+}
+
+function parsePart1(line) {
+  grid.push(line.split(''));
+
+  const row = grid.length - 1;
+  let word = '';
+  line.split('').forEach((char, col) => {
+    if (char.match(/\d/)) {
+      word += char;
+      return;
+    }
+
+    if (word !== '') {
+      const num = Number(word) || 0;
+      for (let i = 1; col - i >= 0; i++) {
+        numbers.set(`${row},${col - i}`, {num, start:col-word.length, end:col-1});
+      }
+      word = '';
+    }
+
+    if (char !== '.') {
+      symbols.push({ row, col });
+    }
+  });
+}
+
+//TODO - use symbols and numbers to return sum of part numbers
+function sumPartNumbers() {
+  let sum = 0;  
+  
+  symbols.forEach(pos => {
+    let {row, col} = pos;
+    directions.forEach(dir => {
+      let dx = row+dir.dx;
+      let dy = col+dir.dy;
+      if (numbers.has(getPosStr(dx,dy))) {
+        sum += countPart(dx,dy)
+      }
+    });
+  });
+
+  return sum;
+}
+
+function getPosStr(row,col) {
+  return `${row},${col}`
+}
+
+function countPart(row,col) {
+  let val = numbers.get(getPosStr(row,col));
+  for (let i = val.start; i <= val.end; i++) {
+    numbers.delete(getPosStr(row, i));
+  }
+  console.log(val.num)
+  return val.num;
 }
 
 //////////////////////
 // Part 2 solution
 //////////////////////
 
-function part2(line) {
+
+function runPart2() {
+  rl.on('line', (line) => {
+    if (line.trim() === '') {
+      rl.close();
+    } else {
+      parsePart2(line);
+      rl.prompt();
+    }
+  });
+
+  rl.on('close', () => {
+    console.log(globalSum);
+  });
+
+  rl.prompt();
+
+}
+
+function parsePart2(line) {
 
 }
 
@@ -45,45 +138,7 @@ function part2(line) {
 // RUN
 //////////////////////
 
-function runPart1() {
 
-  rl.on('line', (line) => {
-    lineCount++;
-    if (line.trim() === '') {
-      rl.close();
-    } else {
-      runPart1(line);
-      rl.prompt();
-    }
-  });
-
-  rl.on('close', () => {
-    console.log(globalSum);
-  });
-
-  rl.prompt();
-
-}
-
-function runPart2() {
-
-  rl.on('line', (line) => {
-    lineCount++;
-    if (line.trim() === '') {
-      rl.close();
-    } else {
-      part2(line);
-      rl.prompt();
-    }
-  });
-
-  rl.on('close', () => {
-    console.log(globalSum);
-  });
-
-  rl.prompt();
-
-}
 
 runPart1();
 
